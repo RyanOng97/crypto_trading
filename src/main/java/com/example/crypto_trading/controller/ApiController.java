@@ -1,13 +1,13 @@
 package com.example.crypto_trading.controller;
 
+import com.example.crypto_trading.dto.TradeRequestDTO;
 import com.example.crypto_trading.model.AggregatedPrice;
+import com.example.crypto_trading.model.TradeTransaction;
 import com.example.crypto_trading.model.Wallet;
 import com.example.crypto_trading.repository.AggregatedPriceRepository;
 import com.example.crypto_trading.repository.WalletRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.example.crypto_trading.service.TradeServices;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,10 +16,12 @@ import java.util.List;
 public class ApiController {
     private final AggregatedPriceRepository aggregatedPriceRepository;
     private final WalletRepository walletRepository;
+    private final TradeServices tradeServices;
 
-    public ApiController(AggregatedPriceRepository aggregatedPriceRepository, WalletRepository walletRepository) {
+    public ApiController(AggregatedPriceRepository aggregatedPriceRepository, WalletRepository walletRepository, TradeServices tradeServices) {
         this.aggregatedPriceRepository = aggregatedPriceRepository;
         this.walletRepository = walletRepository;
+        this.tradeServices = tradeServices;
     }
 
     @GetMapping("/prices")
@@ -41,5 +43,10 @@ public class ApiController {
     @GetMapping("/wallet")
     public List<Wallet> getUsersWalletList() {
         return walletRepository.findAll();
+    }
+
+    @PostMapping("/trade")
+    public TradeTransaction trade(@RequestBody TradeRequestDTO tradeRequestDTO) {
+        return tradeServices.trade(tradeRequestDTO);
     }
 }
