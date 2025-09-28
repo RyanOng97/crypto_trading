@@ -1,5 +1,7 @@
 package com.example.crypto_trading.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 
@@ -12,9 +14,15 @@ public class Wallet {
     private Long id;
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @JsonBackReference
     private Users users;
     private String currency;
     private BigDecimal balance;
+
+    @JsonProperty("userId")
+    public Long getUserId() {
+        return users != null ? users.getId() : null;
+    }
 
     public Long getId() {
         return id;
