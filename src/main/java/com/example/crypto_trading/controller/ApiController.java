@@ -12,7 +12,10 @@ import com.example.crypto_trading.repository.WalletRepository;
 import com.example.crypto_trading.service.TradeServices;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -82,5 +85,25 @@ public class ApiController {
     @GetMapping("/users")
     public List<Users> getUsersList() {
         return usersRepository.findAll();
+    }
+
+    @PostMapping("/users")
+    public Users createUser(@RequestBody Map<String, String> request) {
+        String username = request.get("userName");
+        if (username == null || username.isBlank()) {
+            throw new RuntimeException("Username is required");
+        }
+
+        Users user = new Users();
+        user.setUserName(username);
+        usersRepository.save(user);
+
+        walletRepository.saveAll(Arrays.asList(
+                new Wallet(user, "USDT", new BigDecimal("50000.00")),
+                new Wallet(user, "BTC", BigDecimal.ZERO),
+                new Wallet(user, "ETH", BigDecimal.ZERO)
+        ));
+
+        return user;
     }
 }

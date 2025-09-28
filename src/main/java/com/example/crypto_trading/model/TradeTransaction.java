@@ -13,6 +13,7 @@ public class TradeTransaction {
     @GeneratedValue
     private Long id;
     private Long userId;
+    private String userName;
     private String pair;
     private String direction;
     private BigDecimal orderPrice;
@@ -40,6 +41,14 @@ public class TradeTransaction {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getPair() {

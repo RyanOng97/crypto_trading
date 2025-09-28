@@ -3,9 +3,11 @@ package com.example.crypto_trading.service;
 import com.example.crypto_trading.dto.TradeRequestDTO;
 import com.example.crypto_trading.model.AggregatedPrice;
 import com.example.crypto_trading.model.TradeTransaction;
+import com.example.crypto_trading.model.Users;
 import com.example.crypto_trading.model.Wallet;
 import com.example.crypto_trading.repository.AggregatedPriceRepository;
 import com.example.crypto_trading.repository.TradeTransactionRepository;
+import com.example.crypto_trading.repository.UsersRepository;
 import com.example.crypto_trading.repository.WalletRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,15 +21,19 @@ public class TradeServices {
     private final WalletRepository walletRepo;
     private final AggregatedPriceRepository priceRepo;
     private final TradeTransactionRepository txnRepo;
+    private final UsersRepository usersRepository;
 
-    public TradeServices(WalletRepository walletRepo, AggregatedPriceRepository priceRepo, TradeTransactionRepository txnRepo) {
+    public TradeServices(WalletRepository walletRepo, AggregatedPriceRepository priceRepo, TradeTransactionRepository txnRepo, UsersRepository usersRepository) {
         this.walletRepo = walletRepo;
         this.priceRepo = priceRepo;
         this.txnRepo = txnRepo;
+        this.usersRepository = usersRepository;
     }
 
     @Transactional
     public TradeTransaction trade(TradeRequestDTO tradeRequest) {
+        Users user = usersRepository.findById(tradeRequest.getUserId())
+                .orElseThrow(() -> new RuntimeException(("Did not have this user")));
         AggregatedPrice price = priceRepo.findByPair(tradeRequest.getPair())
                 .orElseThrow(() -> new RuntimeException("No price"));
 
@@ -66,6 +72,7 @@ public class TradeServices {
 
         TradeTransaction tx = new TradeTransaction();
         tx.setUserId(tradeRequest.getUserId());
+        tx.setUserName(user.getUserName());
         tx.setPair(tradeRequest.getPair());
         tx.setDirection(tradeRequest.getDirection().toUpperCase());
         tx.setOrderPrice(tradeRequest.getOrderPrice());

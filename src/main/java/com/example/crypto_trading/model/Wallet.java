@@ -19,6 +19,15 @@ public class Wallet {
     private String currency;
     private BigDecimal balance;
 
+    public Wallet() {
+    }
+
+    public Wallet(Users users, String currency, BigDecimal balance) {
+        this.users = users;
+        this.currency = currency;
+        this.balance = balance;
+    }
+
     @JsonProperty("userId")
     public Long getUserId() {
         return users != null ? users.getId() : null;
